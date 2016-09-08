@@ -1,0 +1,4 @@
+rootProject.name = 'registration-service'
+
+include 'regsvc-app'
+include 'regsvc-wlpcfg'

@@ -1,0 +1,54 @@
+<!-- Copyright (c) 2016 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.-->
+<server description="Game On! Registration Room">
+
+  <!-- Enable features -->
+  <featureManager>
+      <feature>localConnector-1.0</feature>
+      <feature>concurrent-1.0</feature>
+      <feature>websocket-1.1</feature>
+      <feature>jndi-1.0</feature>
+      <feature>jsonp-1.0</feature>
+      <feature>cdi-1.2</feature>
+      <feature>appSecurity-2.0</feature>
+      <feature>jaxrs-2.0</feature>
+      <feature>couchdb-1.0</feature>
+  </featureManager>
+
+    <!-- This is required to prevent the web apps from being lazily loaded -->
+    <webContainer deferServletLoad="false"/>
+
+
+    <httpEndpoint host="*" httpPort="9080" httpsPort="9443"
+        id="defaultHttpEndpoint" />
+
+    <keyStore id="defaultKeyStore" password="wibble"/>
+
+    <logging consoleLogLevel="INFO" traceSpecification="*=info:org.gameontext.regsvc.*=all"/>
+
+    <couchdb id="couchdb"
+        jndiName="couchdb/connector"
+        libraryRef="couchdb-lib"
+        url="${env.COUCHDB_SERVICE_URL}"
+        username="${env.COUCHDB_USER}"
+        password="${env.COUCHDB_PASSWORD}"/>
+
+    <library id="couchdb-lib" >
+        <fileset dir='${server.config.dir}/lib' />
+    </library>
+
+    <webApplication contextRoot="/regsvc" id="regsvc" location="regsvc-app.war">
+      <classloader commonLibraryRef="couchdb-lib"></classloader>
+    </webApplication>
+</server>

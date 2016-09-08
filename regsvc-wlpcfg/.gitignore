@@ -1,0 +1,13 @@
+/target/
+/.classpath
+/.settings
+/.project
+
+/servers/.classCache
+/servers/.pid
+/servers/*/apps
+/servers/*/lib
+/servers/*/logs
+/servers/*/workarea
+/servers/*/configDropins/overrides
+/servers/*/resources

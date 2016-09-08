@@ -1,0 +1,9 @@
+regsvc:
+ build: ./regsvc-wlpcfg
+ ports:
+  - "7010:9080"
+  - "7013:9443"
+ env_file: gameon.${DOCKER_MACHINE_NAME}env
+ container_name: regsvc
+ external_links:
+  - couchdb
