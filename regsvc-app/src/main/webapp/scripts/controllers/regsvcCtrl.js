@@ -17,10 +17,14 @@
 'use strict';
 
 angular.module('regSvcApp')
-.controller('regsvcCtrl', ['$scope', '$http', function($scope, $http) {
+.controller('regsvcCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
 
   console.log("RegSvc : using controller 'regsvcCtrl'");
   
+  $scope.selected = undefined;		//siteid of the currently selected room
+  $scope.rating = 0;
+  
+  $scope.eventId = $location.search().eventId;
   $scope.registrations = [];
   $scope.registration = {
 		  eventId : "testEvent",
@@ -29,13 +33,44 @@ angular.module('regSvcApp')
   }
   $scope.msg = { list : {}, reg : {}}
   
+  $scope.setSelected = function(id) {
+	  console.log("RegSvc : setting selected to " + id);
+	  $scope.rating = 0; //reset rating
+	  for(var i = 0; i < $scope.registrations.length; i++) {
+		   if($scope.registrations[i].eventId == id) {
+			   $scope.selected = $scope.registrations[i];
+			   return;		//set the selected item
+		   }
+	   }
+  }
+  
+  $scope.setRating = function(rating) {
+	  $scope.rating = rating;
+  }
+  
+  $scope.rateSelected = function() {
+	  //rates the currently selected room with a rating
+	  
+  }
+  
   $scope.getRegistrations = function() {
 	 console.log("RegSvc : getting list of registrations");
 	 $http({
 	     url: "/regsvc/v1/register",
 	     method: "GET"
 	   }).then(function (response) {
-		    $scope.registrations = response.data;
+		   if($scope.eventId) {
+			   console.log("RegSvc : filtering for event " + $scope.eventId);
+			   $scope.registrations = [];
+			   for(var i = 0; i < response.data.length; i++) {
+				   if(response.data[i].eventId == $scope.eventId) {
+					   $scope.registrations.push(response.data[i]);
+				   }
+			   }
+		   } else {
+			   console.log("RegSvc : showing all registrations");
+			   $scope.registrations = response.data;
+		   }
 		    $scope.msg.list.status = "Registration list retrieved OK";
 		    $scope.msg.list.alert = undefined;
    		}, function (response) {
@@ -68,5 +103,6 @@ angular.module('regSvcApp')
   }
   
   $scope.getRegistrations();
+  
 
 }]);

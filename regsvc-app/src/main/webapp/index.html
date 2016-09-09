@@ -24,26 +24,30 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
-    <link rel="stylesheet" href="styles/main.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
 </head>
 <body ng-controller="regsvcCtrl">
 	<div class="container">
-  		<div class="col-sm-6">
+  		<div class="col-sm-12">
 			<div class="panel panel-default">
             	<div class="panel-heading">
-              		<h3 class="panel-title">Existing Registrations</h3>
+              		<h3 class="panel-title">{{eventId}} Room Registrations</h3>
             	</div>
             	<div class="panel-body">
 		  			<div class="table-responsive">
 		  				<table class="table">
 		  					<thead>
-		  						<tr><th>Event</th><th>Game On! ID</th><th>Site ID</th></tr>
+		  						<tr><th>Event</th><th>Game On! ID</th><th>Site ID</th><th>Rate</th></tr>
 		  					</thead>
 		  					<tbody>
 			  					<tr ng-repeat="registration in registrations">
 			  						<td>{{registration.eventId}}</td>
 			  						<td>{{registration.gameonId}}</td>
 			  						<td>{{registration.siteId}}</td>
+			  						<td data-toggle="tooltip" title="Click to rate this room">
+			  						
+			  						<i class="fa fa-thumbs-up" aria-hidden="true" data-toggle="modal" data-target="#rateRoom" data-ng-click="setSelected(registration.eventId);"></i>
+			  						</td>
 			  					</tr>
 		  					</tbody>
 		  				</table>
@@ -57,6 +61,52 @@
             	</div>
           	</div>
   		</div>
+  	</div>
+  		<div class="modal" id="rateRoom" role="dialog">
+			<div class="modal-dialog">
+      			<div class="modal-content">
+        			<div class="modal-header">
+          				<h4 class="modal-title">Rate room {{selected.siteId}}</h4>
+        			</div>
+        			<div class="modal-body">
+	        			<div class="table-responsive">
+			  				<table class="table">
+			  					<thead>
+			  						<tr><th>Your Game On! Id</th><th>Rating</th></tr>
+			  					</thead>
+			  					<tbody>
+			  						<tr>
+			  							<td><input class="u-full-width" type="text" name="gid" id="gid" ng-model="registration.gameonId" placeholder="Enter your Game On! id e.g. github:1234567" /></td>
+			  							<td>
+			  								<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating == 0" data-ng-click="setRating(1)"></i>
+					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating >= 1" data-ng-click="setRating(1)"></i>
+					          				
+					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating < 2" data-ng-click="setRating(2)"></i>
+					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating >= 2" data-ng-click="setRating(2)"></i>
+					          				
+					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating < 3" data-ng-click="setRating(3)"></i>
+					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating >= 3" data-ng-click="setRating(3)"></i>
+					          				
+					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating < 4" data-ng-click="setRating(4)"></i>
+					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating >= 4" data-ng-click="setRating(4)"></i>
+					          				
+					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating < 5" data-ng-click="setRating(5)"></i>
+					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating == 5" data-ng-click="setRating(5)"></i>
+			  							</td>
+			  						</tr>
+			  					</tbody>
+			      			</table>
+          				</div>
+        			</div>
+        			<div class="modal-footer">
+          				<button type="button" class="btn btn-primary" data-dismiss="modal">Rate</button>
+          				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        			</div>
+      			</div>
+      		</div>
+      	</div>
+ 
+ 	<div class="container">
   		<div class="col-sm-6">
 			<div class="panel panel-default">
             	<div class="panel-heading">
