@@ -23,7 +23,7 @@
     <meta name="description" content="Game On! Registration Service">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
 </head>
 <body ng-controller="regsvcCtrl">
@@ -31,7 +31,8 @@
   		<div class="col-sm-12">
 			<div class="panel panel-default">
             	<div class="panel-heading">
-              		<h3 class="panel-title">{{eventId}} Room Registrations</h3>
+              		<h3 class="panel-title">{{eventId}} Room Registrations 
+              		<i class="fa fa-plus-square" aria-hidden="true" ng-show="eventId" data-toggle="modal" data-target="#registerRoom" data-ng-click="setRegistration();"></i></h3>
             	</div>
             	<div class="panel-body">
 		  			<div class="table-responsive">
@@ -57,6 +58,12 @@
 		      		</div>
 		      		<div ng-show="msg.list.status" class="alert alert-success" role="alert">
 		        		{{msg.list.status}}
+		      		</div>
+		      		<div ng-show="msg.reg.alert" class="alert alert-danger" role="alert">
+		        		{{msg.reg.alert}}
+		      		</div>
+		      		<div ng-show="msg.reg.status" class="alert alert-success" role="alert">
+		        		{{msg.reg.status}}
 		      		</div>
             	</div>
           	</div>
@@ -98,11 +105,11 @@
 		  					</tbody>
 		  				</table>
 		  			</div>
-		  			<div ng-show="msg.list.alert" class="alert alert-danger" role="alert">
-		        		{{msg.list.alert}}
+		  			<div ng-show="msg.rating.alert" class="alert alert-danger" role="alert">
+		        		{{msg.rating.alert}}
 		      		</div>
-		      		<div ng-show="msg.list.status" class="alert alert-success" role="alert">
-		        		{{msg.list.status}}
+		      		<div ng-show="msg.rating.status" class="alert alert-success" role="alert">
+		        		{{msg.rating.status}}
 		      		</div>
             	</div>
           	</div>
@@ -152,33 +159,32 @@
       		</div>
       	</div>
  
- 	<div class="container">
-  		<div class="col-sm-6">
-			<div class="panel panel-default">
-            	<div class="panel-heading">
-              		<h3 class="panel-title">Register room</h3>
-            	</div>
-            	<div class="panel-body">
-              		<label for="gameonid">Game On! Id</label>
-		      		<input class="u-full-width" type="text" name="gid" id="gid" ng-model="registration.gameonId" placeholder="Enter your Game On! id e.g. github:1234567" /><br />
-		      		<label for="siteid">Site Id</label>
-		      		<input class="u-full-width" type="text" name="siteid" id="siteid" ng-model="registration.siteId" placeholder="Unique site ID for the room" /></br>
-		      		<label for="eventid">Event Id</label>
-		      		<input class="u-full-width" type="text" name="eventid" id="eventid" ng-model="registration.eventId" placeholder="Enter your event ID" />
-		      		<button type="button" class="btn btn-default" data-ng-click="register()">Register</button>
-		      		<div ng-show="msg.reg.alert" class="alert alert-danger" role="alert">
-		        		{{msg.reg.alert}}
-		      		</div>
-		      		<div ng-show="msg.reg.status" class="alert alert-success" role="alert">
-		        		{{msg.reg.status}}
-		      		</div>
-            	</div>
-          	</div>
-  		</div>
-	</div>
+ 		<div class="modal" id="registerRoom" role="dialog">
+			<div class="modal-dialog">
+      			<div class="modal-content">
+        			<div class="modal-header">
+          				<h4 class="modal-title">Manual Room Registration</h4>
+        			</div>
+        			<div class="modal-body">
+        			    <label for="gameonid">Game On! Id</label>
+			      		<input class="u-full-width" type="text" name="gid" id="gid" ng-model="registration.gameonId" placeholder="Enter your Game On! id e.g. github:1234567" /><br />
+			      		<label for="siteid">Site Id</label>
+			      		<input class="u-full-width" type="text" name="siteid" id="siteid" ng-model="registration.siteId" placeholder="Unique site ID for the room" /></br>
+			      		<label for="eventid">Event Id</label>
+			      		<input class="u-full-width" readonly type="text" name="eventid" id="eventid" ng-model="registration.eventId" placeholder="Enter your event ID" />
+           			</div>
+           			<div class="modal-footer">
+         				<button type="button" class="btn btn-primary" data-dismiss="modal" data-ng-click="register()">Register</button>
+         				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+       				</div>
+        		</div>
+       		</div>
+   		</div>
+
+
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
     

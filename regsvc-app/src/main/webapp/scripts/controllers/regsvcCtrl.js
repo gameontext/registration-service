@@ -27,9 +27,9 @@ angular.module('regSvcApp')
   $scope.eventId = $location.search().eventId;
   $scope.registrations = [];
   $scope.registration = {
-		  eventId : "testEvent",
-		  siteId : "123456789",
-		  gameonId : "github:123456789"
+		  eventId : "",
+		  siteId : "",
+		  gameonId : ""
   }
   
   $scope.ratings = [];
@@ -40,7 +40,7 @@ angular.module('regSvcApp')
 		  rating : 0  
   }
   
-  $scope.msg = { list : {}, reg : {}}
+  $scope.msg = { list : {}, reg : {}, rating: {}}
   
   $scope.setSelected = function(id) {
 	  console.log("RegSvc : setting selected to " + id);
@@ -51,6 +51,11 @@ angular.module('regSvcApp')
 			   return;		//set the selected item
 		   }
 	   }
+  }
+  
+  $scope.setRegistration = function() {
+	  //setup the manual registration with the correct event ID
+	  $scope.registration.eventId = $scope.eventId;
   }
   
   $scope.setRating = function(rating) {
@@ -121,9 +126,11 @@ angular.module('regSvcApp')
 		     data: JSON.stringify($scope.rating).trim()
 		   }).then(function (response) {
 			    console.log('RegSvc : rating successful : response from server : ' + response.status);
+			    $scope.msg.rating.status = "Room rated OK";
+			    $scope.msg.rating.alert = undefined;
 	   		}, function (response) {
-	   			$scope.msg.reg.alert = "Failed to rate room : " + response.status;
-	   			$scope.msg.reg.status = undefined;
+	   			$scope.msg.rating.alert = "Failed to rate room : " + response.status;
+	   			$scope.msg.rating.status = undefined;
 	   		}
 		 );	  
 	  }
@@ -146,8 +153,12 @@ angular.module('regSvcApp')
 				   console.log("RegSvc : showing all ratings");
 				   $scope.ratings = response.data;
 			   }
+			   $scope.msg.rating.status = "Room ratings retrieved OK";
+			   $scope.msg.rating.alert = undefined;
 	   		}, function (response) {
 	   			console.log("RegSvc : failed to get ratings, response code from server " + response.status);
+	   			$scope.msg.rating.alert = "Failed to get ratings : " + response.status;
+	   			$scope.msg.rating.status = undefined;
 	   		}
 		 );
 	  }

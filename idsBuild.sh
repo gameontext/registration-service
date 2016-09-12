@@ -30,6 +30,7 @@ echo Building projects using gradle...
 if [ $? != 0 ]
 then
   echo Gradle Build failed.
+  curl -X 'POST' --silent --data-binary '{"text":"Build for the registration service has failed."}' $SLACK_WEBHOOK_PATH > /dev/null
   exit -1
 else
   cd regsvc-wlpcfg
@@ -37,6 +38,7 @@ else
   if [ $? != 0 ]
   then
     echo Docker Build failed.
+    curl -X 'POST' --silent --data-binary '{"text":"Docker build for the registration service has failed."}' $SLACK_WEBHOOK_PATH > /dev/null
     exit -2
   else
     echo Attempting to remove old containers.
@@ -47,6 +49,7 @@ else
     if [ $? != 0 ]
     then
       echo Docker Run failed.
+      curl -X 'POST' --silent --data-binary '{"text":"Docker run for the registration service has failed."}' $SLACK_WEBHOOK_PATH > /dev/null
       exit -3
     else
       cd ..
