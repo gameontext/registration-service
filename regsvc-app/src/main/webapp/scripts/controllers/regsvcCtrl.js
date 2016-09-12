@@ -22,7 +22,7 @@ angular.module('regSvcApp')
   console.log("RegSvc : using controller 'regsvcCtrl'");
   
   $scope.selected = undefined;		//siteid of the currently selected room
-  $scope.rating = 0;
+  $scope.score = 0;
   
   $scope.eventId = $location.search().eventId;
   $scope.registrations = [];
@@ -31,6 +31,15 @@ angular.module('regSvcApp')
 		  siteId : "123456789",
 		  gameonId : "github:123456789"
   }
+  
+  $scope.ratings = [];
+  $scope.rating = {
+		  eventId : "",
+		  siteId : "",
+		  gameonId : "",
+		  rating : 0  
+  }
+  
   $scope.msg = { list : {}, reg : {}}
   
   $scope.setSelected = function(id) {
@@ -45,12 +54,7 @@ angular.module('regSvcApp')
   }
   
   $scope.setRating = function(rating) {
-	  $scope.rating = rating;
-  }
-  
-  $scope.rateSelected = function() {
-	  //rates the currently selected room with a rating
-	  
+	  $scope.score = rating;
   }
   
   $scope.getRegistrations = function() {
@@ -60,7 +64,7 @@ angular.module('regSvcApp')
 	     method: "GET"
 	   }).then(function (response) {
 		   if($scope.eventId) {
-			   console.log("RegSvc : filtering for event " + $scope.eventId);
+			   console.log("RegSvc : filtering registrations for event " + $scope.eventId);
 			   $scope.registrations = [];
 			   for(var i = 0; i < response.data.length; i++) {
 				   if(response.data[i].eventId == $scope.eventId) {
@@ -101,8 +105,55 @@ angular.module('regSvcApp')
    		}
 	 );	  
   }
+
+  $scope.rate = function() {
+		 console.log("RegSvc : Room being rated by user " + $scope.gameonId);
+		 $scope.rating.siteId = $scope.selected.siteId;
+		 $scope.rating.eventId = $scope.selected.eventId;
+		 $scope.rating.rating = $scope.score;
+		 
+		 $http({
+		     url: "/regsvc/v1/rate",
+		     method: "POST",
+		     headers: {  
+		                 'contentType': 'application/json; charset=utf-8"' //what is being sent to the server
+		     },
+		     data: JSON.stringify($scope.rating).trim()
+		   }).then(function (response) {
+			    console.log('RegSvc : rating successful : response from server : ' + response.status);
+	   		}, function (response) {
+	   			$scope.msg.reg.alert = "Failed to rate room : " + response.status;
+	   			$scope.msg.reg.status = undefined;
+	   		}
+		 );	  
+	  }
+  
+  $scope.getRatings = function() {
+		 console.log("RegSvc : getting list of ratings for room");
+		 $http({
+		     url: "/regsvc/v1/rate",
+		     method: "GET"
+		   }).then(function (response) {
+			   if($scope.eventId) {
+				   console.log("RegSvc : filtering ratings for event " + $scope.eventId);
+				   $scope.ratings = [];
+				   for(var i = 0; i < response.data.length; i++) {
+					   if(response.data[i].eventId == $scope.eventId) {
+						   $scope.ratings.push(response.data[i]);
+					   }
+				   }
+			   } else {
+				   console.log("RegSvc : showing all ratings");
+				   $scope.ratings = response.data;
+			   }
+	   		}, function (response) {
+	   			console.log("RegSvc : failed to get ratings, response code from server " + response.status);
+	   		}
+		 );
+	  }
   
   $scope.getRegistrations();
+  $scope.getRatings();
   
 
 }]);

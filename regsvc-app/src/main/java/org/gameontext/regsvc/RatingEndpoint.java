@@ -25,10 +25,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
-import org.gameontext.regsvc.db.RegistrationRepository;
-import org.gameontext.regsvc.models.Registration;
+import org.gameontext.regsvc.db.RatingRepository;
+import org.gameontext.regsvc.models.Rating;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -37,49 +36,44 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 /**
- * Root for controlling room registrations
+ * Root for controlling room ratings
  */
-@Path("/register")
+@Path("/rate")
 @Api( tags = {"register"})
 @Produces(MediaType.APPLICATION_JSON)
-public class RegistrationEndpoint {
+public class RatingEndpoint {
 
     @Inject
-    protected RegistrationRepository repo;
+    protected RatingRepository repo;
 
     /**
-     * GET /regsvc/v1/register
+     * GET /regsvc/v1/rate
      * @throws JsonProcessingException
      */
     @GET
-    @ApiOperation(value = "List rooms registered for events",
-        notes = "Provides a list of rooms that are registered for a given event.",
+    @ApiOperation(value = "List rooms ratings",
+        notes = "Provides a list of room ratings for a given event.",
         code = HttpURLConnection.HTTP_OK)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRegistrations() {
-        return Response.ok(repo.getRegistrations()).build();
+    public Response getRatings() {
+        return Response.ok(repo.getRatings()).build();
     }
     
-	/**
-     * POST /regsvc/v1/register
+    /**
+     * POST /regsvc/v1/rate
      * @throws JsonProcessingException
      */
     @POST
-    @ApiOperation(value = "Create a new registration",
-        notes = "Register a room for a given event",
+    @ApiOperation(value = "Rate a registered room",
+        notes = "Rate a room for a given event",
         code = HttpURLConnection.HTTP_OK)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerRoom(
-            @ApiParam(value = "Room to register", required = true) Registration registration) {
-        registration.setId(registration.getSiteId());   //use the site id as the doc id for the database
-        if(repo.createRegistration(registration)) {
-            return Response.ok(registration).build();
-        } else {
-            //this ID already exists
-            return Response.status(Status.CONFLICT).build();
-        }
+    public Response rateRoom(
+            @ApiParam(value = "Room to rate", required = true) Rating rating) {
+        repo.createRating(rating);
+        return Response.ok(rating).build();
     }
 
 

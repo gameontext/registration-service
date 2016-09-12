@@ -15,6 +15,10 @@
  *******************************************************************************/
 package org.gameontext.regsvc.db;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.IntConsumer;
 import java.util.logging.Level;
 
 import javax.annotation.PostConstruct;
@@ -23,7 +27,7 @@ import javax.inject.Inject;
 
 import org.ektorp.CouchDbConnector;
 import org.gameontext.regsvc.Log;
-import org.gameontext.regsvc.models.Registration;
+import org.gameontext.regsvc.models.Rating;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -31,13 +35,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @ApplicationScoped
-public class RegistrationRepository {
+public class RatingRepository {
 
     @Inject
-    @DbConfig
+    @DbConfig(name="rating_repository")
     protected CouchDbConnector db;
 
-    protected RegistrationDocuments registrations;
+    protected RatingDocuments ratings;
 
     protected ObjectMapper mapper;
 
@@ -51,7 +55,7 @@ public class RegistrationRepository {
 
         try {
             // Ensure required views exist
-            registrations = new RegistrationDocuments(db);
+            ratings = new RatingDocuments(db);
 
         } catch (Exception e) {
             // Log the warning, and then re-throw to prevent this class from going into service,
@@ -61,9 +65,22 @@ public class RegistrationRepository {
         }
     }
 
-    public String getRegistrations() {
+    public String getRatings() {
         try {
-            return mapper.writeValueAsString(registrations.getRegistrations());
+            List<Rating> data = ratings.getRatings();
+            Map<String, Rating> results = new HashMap<>();
+            for(Rating item : data) {
+                if(!results.containsKey(item.getSiteId())) {
+                    RatingAverager avg = data.stream()
+                                                .filter(r -> r.getSiteId() == item.getSiteId())
+                                                .map(Rating::getRating)
+                                                .collect(RatingAverager::new, RatingAverager::accept, RatingAverager::combiner);
+                    item.setRating(avg.calculate());
+                    results.put(item.getSiteId(), item);                              
+                }
+                
+            }
+            return mapper.writeValueAsString(results.values());
         } catch (JsonProcessingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -71,9 +88,32 @@ public class RegistrationRepository {
         }
     }
     
-    public boolean createRegistration(Registration registration) {
-        return registrations.registerRoom(registration);
+    
+    public void createRating(Rating rating) {
+        ratings.rateRoom(rating);
     }
+    
+    private class RatingAverager implements IntConsumer {
+        private int ratingCount = 0;    //how many ratings have been added to the sum
+        private int sum = 0;            //total sum of ratings so far
 
+        @Override
+        public void accept(int value) {
+            ratingCount++;
+            sum += value;
+        }
+        
+        //need a combiner to be able to use this in a collector
+        public void combiner(RatingAverager value) {
+            ratingCount += value.ratingCount;
+            sum += value.sum;
+        }
+        
+        //calculates the average
+        public int calculate() {
+            return (sum / ratingCount);
+        }
+        
+    }
 
 }

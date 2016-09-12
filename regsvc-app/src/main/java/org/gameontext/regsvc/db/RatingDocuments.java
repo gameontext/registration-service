@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.gameontext.regsvc.db;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -23,10 +22,9 @@ import org.ektorp.CouchDbConnector;
 import org.ektorp.UpdateConflictException;
 import org.ektorp.ViewQuery;
 import org.gameontext.regsvc.Log;
-import org.gameontext.regsvc.models.Registration;
+import org.gameontext.regsvc.models.Rating;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -37,66 +35,46 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *   "eventId" : "myEvent",
  *   "siteId": "1d1e2f39f95ee2ad88f40e67a5006748",
  *   "gameonId": "github:123456789"
+ *   "rating" : 2
  * }
  * </pre>
  */
-public class RegistrationDocuments {
+public class RatingDocuments {
 
-    protected static final String DESIGN_DOC = "_design/registration";
+    protected static final String DESIGN_DOC = "_design/rating";
 
     protected final CouchDbConnector db;
     protected final ViewQuery all;
     protected final ObjectMapper mapper;
 
-    protected RegistrationDocuments(CouchDbConnector db) {
+    protected RatingDocuments(CouchDbConnector db) {
         this.db = db;
         all = new ViewQuery().designDocId(DESIGN_DOC).viewName("all").cacheOk(true);
         mapper = new ObjectMapper();
     }
-
+    
     /**
-     * LIST
-     * @param owner Owner of sites (optional)
-     * @param name Name of site/room (optional)
-     * @return List of all sites, possibly filtered by owner and/or name. Will not return null.
+     * Rate a room for an event
      */
-    public List<JsonNode> listRegistrations(String eventId) {
-
-        List<JsonNode> registrations = Collections.emptyList();
-
-        registrations = db.queryView(all, JsonNode.class);
-
-        if ( registrations == null )
-            return Collections.emptyList();
-
-        return registrations;
-    }
-
-    /**
-     * Register a room for an event
-     */
-    public boolean registerRoom(Registration reg) {
-        Log.mapOperations(Level.FINE, this, "Add new registration: {0}", reg);
+    public void rateRoom(Rating rating) {
+        Log.mapOperations(Level.FINE, this, "Add new rating: {0}", rating);
 
         try {
-            System.out.println("Registering room : " + mapper.writeValueAsString(reg));
+            System.out.println("Rating room : " + mapper.writeValueAsString(rating));
         } catch (JsonProcessingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         try {
-            db.create(reg);
+            db.create(rating);
         } catch (UpdateConflictException ex) {
-            // If there is a conflict, we'll return false so that the caller tries again.
-            return false;
+            // If there is a conflict, update with the new rating
+            db.update(rating);
         }
-        
-        return true;
     }
     
-    
-    public List<Registration> getRegistrations() {
-        return db.queryView(all, Registration.class);
+    public List<Rating> getRatings() {
+        return db.queryView(all, Rating.class);
     }
 
  }

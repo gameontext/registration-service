@@ -17,21 +17,20 @@ package org.gameontext.regsvc.models;
 
 import org.ektorp.support.CouchDbDocument;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /*
- * Bean representing a registration in the database
+ * Bean representing a user rating a room for an event
  */
 @JsonInclude(Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown=true)
-public class Registration extends CouchDbDocument {
+public class Rating extends CouchDbDocument {
     private static final long serialVersionUID = -5912973062793702168L;
     
     private String eventId;
-    private String gameonId;
-    private String siteId;
+    private String gameonId;    //this is the Game On id of the person doing the rating 
+    private String siteId;      //the room that is being rated
+    private int rating;         //rating for the room
     
     public String getEventId() {
         return eventId;
@@ -51,5 +50,13 @@ public class Registration extends CouchDbDocument {
     public void setSiteId(String siteId) {
         this.siteId = siteId;
     }
+    
+    public int getRating() {
+        return rating;
+    }
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+    
     
 }

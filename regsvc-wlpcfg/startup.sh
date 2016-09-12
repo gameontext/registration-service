@@ -112,18 +112,32 @@ else
       curl -X PUT ${COUCHDB_SERVICE_URL}/_config/admins/${COUCHDB_USER} -d \"${COUCHDB_PASSWORD}\"
   fi
 
-  echo "** Checking database"
+  echo "** Checking registration database"
   curl --fail -X GET ${AUTH_HOST}/regsvc_repository
   if [ $? -eq 22 ]; then
-      echo "** Creating database"
+      echo "** Creating registration database"
       curl -X PUT $AUTH_HOST/regsvc_repository
   fi
 
-  echo "** Checking design documents"
+  echo "** Checking registration design documents"
   curl -v --fail -X GET ${AUTH_HOST}/regsvc_repository/_design/registration
   if [ $? -eq 22 ]; then
-      echo "** Creating design documents"
+      echo "** Creating registration design documents"
       curl -v -X PUT -H "Content-Type: application/json" --data @${SERVER_PATH}/registration.json ${AUTH_HOST}/regsvc_repository/_design/registration
+  fi
+  
+  echo "** Checking rating database"
+  curl --fail -X GET ${AUTH_HOST}/rating_repository
+  if [ $? -eq 22 ]; then
+      echo "** Creating rating database"
+      curl -X PUT $AUTH_HOST/rating_repository
+  fi
+
+  echo "** Checking rating design documents"
+  curl -v --fail -X GET ${AUTH_HOST}/rating_repository/_design/rating
+  if [ $? -eq 22 ]; then
+      echo "** Creating rating design documents"
+      curl -v -X PUT -H "Content-Type: application/json" --data @${SERVER_PATH}/rating.json ${AUTH_HOST}/rating_repository/_design/rating
   fi
 
   #exec a8sidecar --supervise /opt/ibm/wlp/bin/server run $SERVERDIRNAME

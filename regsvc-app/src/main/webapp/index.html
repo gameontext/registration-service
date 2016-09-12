@@ -62,6 +62,52 @@
           	</div>
   		</div>
   	</div>
+	<div class="container">
+  		<div class="col-sm-12">
+			<div class="panel panel-default">
+            	<div class="panel-heading">
+              		<h3 class="panel-title">{{eventId}} Leaderboard</h3>
+            	</div>
+            	<div class="panel-body">
+		  			<div class="table-responsive">
+		  				<table class="table">
+		  					<thead>
+		  						<tr><th>Event</th><th>Site ID</th><th>Avg. Rate</th></tr>
+		  					</thead>
+		  					<tbody>
+			  					<tr ng-repeat="rating in ratings">
+			  						<td>{{rating.eventId}}</td>
+			  						<td>{{rating.siteId}}</td>
+			  						<td data-toggle="tooltip" title="Average rating for this room">
+		  								<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating.rating == 0"></i>
+				          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating.rating >= 1"></i>
+				          				
+				          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating.rating < 2"></i>
+				          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating.rating >= 2"></i>
+				          				
+				          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating.rating < 3"></i>
+				          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating.rating >= 3"></i>
+				          				
+				          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating.rating < 4"></i>
+				          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating.rating >= 4"></i>
+				          				
+				          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating.rating < 5"></i>
+				          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating.rating == 5"></i>
+			  						</td>
+			  					</tr>
+		  					</tbody>
+		  				</table>
+		  			</div>
+		  			<div ng-show="msg.list.alert" class="alert alert-danger" role="alert">
+		        		{{msg.list.alert}}
+		      		</div>
+		      		<div ng-show="msg.list.status" class="alert alert-success" role="alert">
+		        		{{msg.list.status}}
+		      		</div>
+            	</div>
+          	</div>
+  		</div>
+  	</div>
   		<div class="modal" id="rateRoom" role="dialog">
 			<div class="modal-dialog">
       			<div class="modal-content">
@@ -76,22 +122,22 @@
 			  					</thead>
 			  					<tbody>
 			  						<tr>
-			  							<td><input class="u-full-width" type="text" name="gid" id="gid" ng-model="registration.gameonId" placeholder="Enter your Game On! id e.g. github:1234567" /></td>
+			  							<td><input class="u-full-width" type="text" name="gid" id="gid" ng-model="rating.gameonId" placeholder="Enter your Game On! id e.g. github:1234567" /></td>
 			  							<td>
-			  								<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating == 0" data-ng-click="setRating(1)"></i>
-					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating >= 1" data-ng-click="setRating(1)"></i>
+			  								<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="score == 0" data-ng-click="setRating(1)"></i>
+					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="score >= 1" data-ng-click="setRating(1)"></i>
 					          				
-					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating < 2" data-ng-click="setRating(2)"></i>
-					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating >= 2" data-ng-click="setRating(2)"></i>
+					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="score < 2" data-ng-click="setRating(2)"></i>
+					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="score >= 2" data-ng-click="setRating(2)"></i>
 					          				
-					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating < 3" data-ng-click="setRating(3)"></i>
-					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating >= 3" data-ng-click="setRating(3)"></i>
+					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="score < 3" data-ng-click="setRating(3)"></i>
+					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="score >= 3" data-ng-click="setRating(3)"></i>
 					          				
-					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating < 4" data-ng-click="setRating(4)"></i>
-					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating >= 4" data-ng-click="setRating(4)"></i>
+					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="score < 4" data-ng-click="setRating(4)"></i>
+					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="score >= 4" data-ng-click="setRating(4)"></i>
 					          				
-					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="rating < 5" data-ng-click="setRating(5)"></i>
-					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="rating == 5" data-ng-click="setRating(5)"></i>
+					          				<i class="fa fa-thumbs-o-up" aria-hidden="true" ng-show="score < 5" data-ng-click="setRating(5)"></i>
+					          				<i class="fa fa-thumbs-up" aria-hidden="true" ng-show="score == 5" data-ng-click="setRating(5)"></i>
 			  							</td>
 			  						</tr>
 			  					</tbody>
@@ -99,7 +145,7 @@
           				</div>
         			</div>
         			<div class="modal-footer">
-          				<button type="button" class="btn btn-primary" data-dismiss="modal">Rate</button>
+          				<button type="button" class="btn btn-primary" data-dismiss="modal" data-ng-click="rate()">Rate</button>
           				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         			</div>
       			</div>

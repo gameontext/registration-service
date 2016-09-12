@@ -19,6 +19,7 @@ import java.util.logging.Level;
 
 import javax.annotation.Resource;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
@@ -27,16 +28,16 @@ import org.gameontext.regsvc.Log;
 public class CouchInjector {
     @Resource(lookup="couchdb/connector")
     protected CouchDbInstance dbi;
-    
-    public static final String DB_NAME = "regsvc_repository";
 
     @Produces
-    public CouchDbConnector expose() {
+    @DbConfig
+    public CouchDbConnector expose(InjectionPoint ip) {
 
         try {
+            DbConfig config = ip.getAnnotated().getAnnotation(DbConfig.class);
             // Connect to the database with the specified
-            CouchDbConnector dbc = dbi.createConnector(DB_NAME, true);
-            org.gameontext.regsvc.Log.log(Level.FINER, this, "Connected to {0}", DB_NAME);
+            CouchDbConnector dbc = dbi.createConnector(config.name(), true);
+            org.gameontext.regsvc.Log.log(Level.FINER, this, "Connected to {0}", config.name());
             return dbc;
         } catch (Exception e) {
             // Log the warning, and then re-throw to prevent this class from going into service,
